@@ -7,4 +7,6 @@ Nevertheless, the aim is less to show how such segment restoring can be done, bu
 
 Please follow with the second part for a less redundant version of the parallel codes using a customized synchronization procedure: https://github.com/MichaelSiehl/Atomic_Subroutines--How_the_Parallel_Codes_may_look_like--Part_2
 
-The src folder contains the complete code with additionally required files. 
+The src folder contains the complete code with additionally required files.
+
+# The Parallel Logic Code to initiate and control restoring of ordered execution segments (executed on image 1)
