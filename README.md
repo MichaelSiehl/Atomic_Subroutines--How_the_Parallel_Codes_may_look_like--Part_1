@@ -10,7 +10,9 @@ Please follow with the second part for a less redundant version of the parallel 
 The src folder contains the complete code with additionally required files.
 
 # The Parallel Logic Code to initiate and control restoring of ordered execution segments (executed on image 1)
-The following procedure 'OOOPimsc_SynchronizeTheInvolvedImages_CA' comprises all the required parallel logic codes that get executed on image 1 for controlling the segment synchronization (i.e. the restoring of ordered executing segments) among (and on) the remote images (2, 3, and 4 for this example). The procedure is divided into seven logical parts (1)-(7):<br />
+The following procedure 'OOOPimsc_SynchronizeTheInvolvedImages_CA' comprises all the required parallel logic codes that get executed on image 1 for controlling the segment synchronization (i.e. the restoring of ordered executing segments) among (and on) the remote images (2, 3, and 4 for this example).<br />
+
+The procedure is divided into seven logical parts (1)-(7):<br />
 (1) initiate segment synchronization on the involved remote images<br />
 (2) wait until all the involved remote image(s) do signal that they are in state WaitForSegmentSynchronization<br />
 (3) set the involved remote images to state ContinueSegmentSynchronization<br />
@@ -19,7 +21,10 @@ The following procedure 'OOOPimsc_SynchronizeTheInvolvedImages_CA' comprises all
 (6) initiate that the remote images do restore segment ordering<br />
 (7) wait until all the involved remote image(s) do signal that they are in state FinishedSegmentSynchronization<br />
 
-Access to atomic subroutines is encapsulated by calls to procedures 'OOOPimscSAElement_atomic_intImageActivityFlag99_CA' (atomic_define) and 'OOOPimscGAElement_check_atomic_intImageActivityFlag99_CA' (atomic_ref).
+Parts (2), (4), and (7) do contain a spin-wait loop synchronization each. For this example, these are the redundant code sections because we did not implement a customized snchronization procedure yet.<br />
+
+Access to atomic subroutines is encapsulated by calls of the procedures 'OOOPimscSAElement_atomic_intImageActivityFlag99_CA' (atomic_define) and 'OOOPimscGAElement_check_atomic_intImageActivityFlag99_CA' (atomic_ref).<br />
+
 
 ```fortran
 subroutine OOOPimsc_SynchronizeTheInvolvedImages_CA (Object_CA, intNumberOfImages,intA_RemoteImageNumbers)
