@@ -357,3 +357,89 @@ subroutine OOOPimsc_WaitForSegmentSynchronization_CA (Object_CA, intSetFromImage
 end subroutine OOOPimsc_WaitForSegmentSynchronization_CA
 
 ```
+
+
+```fortran
+subroutine OOOPimsc_DoSegmentSynchronization_CA (Object_CA, intSetFromImageNumber)
+  ! Current image status is 'SendetCurrentSegmentNumber',
+  ! code execution on this image will be stopped until it is set to
+  ! state 'DoSegmentSynchronization'.
+  !
+  ! Then, this routine will transmit the SyncMemoryCount value
+  ! to the remote image with index 'SetFromImageNumber'.
+  ! Image status turns into 'SendetCurrentSegmentNumber'.
+  ! (the involved images (not image 1) will execute this)
+  type (OOOPimsc_adtImageStatus_CA), codimension[*], volatile, intent (inout) :: Object_CA
+  integer(OOOGglob_kint), intent (in) :: intSetFromImageNumber ! this is the remote image number (image 1)
+                                                               ! which initiated the synchronization
+  integer(OOOGglob_kint) :: status = 0 ! error status
+  integer(OOOGglob_kint) :: intMaxSegmentCount
+  integer(OOOGglob_kint) :: intNumberOfSyncMemoryStatementsToExecute
+  integer(OOOGglob_kint) :: intImageActivityFlag
+  integer(OOOGglob_kint) :: intPackedEnumValue
+  integer(OOOGglob_kint) :: intRemoteImageNumber
+  integer(OOOGglob_kint) :: intSyncMemoryCount
+  integer(OOOGglob_kint) :: intCount
+  !
+                                                                call OOOGglob_subSetProcedures &
+                                                            ("OOOPimsc_DoSegmentSynchronization_CA")
+  !
+  intRemoteImageNumber = intSetFromImageNumber
+  !**********************************************************************
+  ! (1) wait until image state is remotely set to value 'DoSegmentSynchronization'
+  ! spin-wait loop synchronization:
+  ! (conterpart routine is step 6 in OOOPimsc_SynchronizeTheInvolvedImages_CA)
+  !
+  do ! check the ImageActivityFlag in local PGAS memory permanently until it has
+     !         value OOOPimscEnum_ImageActivityFlag % DoSegmentSynchronization
+    if (OOOPimscGAElement_check_atomic_intImageActivityFlag99_CA (OOOPimscImageStatus_CA_1, &
+                       OOOPimscEnum_ImageActivityFlag % DoSegmentSynchronization, &
+                        intAdditionalAtomicValue = intMaxSegmentCount)) then
+      !
+      exit ! exit the loop if the remote image (1) has set this image to
+           ! OOOPimscEnum_ImageActivityFlag % DoSegmentSynchronization
+    end if
+    !
+  end do
+  !**********************************************************************
+  ! (2) restore the segment order (sync memory count) on the involved images (this image):
+  !
+  ! (a) get the SyncMemoryCount on this image:
+  call OOOPimscGAElement_atomic_intImageSyncMemoryCount99_CA (Object_CA, intSyncMemoryCount)
+  !
+  ! (b) change the segment order only if this_image has a lower sync memory count as intMaxSegmentCount:
+  if (intMaxSegmentCount .gt. intSyncMemoryCount) then
+    intNumberOfSyncMemoryStatementsToExecute = intMaxSegmentCount - intSyncMemoryCount
+    ! restore the segment order (among the involved images) for this image:
+    do intCount = 1, intNumberOfSyncMemoryStatementsToExecute
+      !
+      call OOOPimsc_subSyncMemory (Object_CA) ! execute sync memory
+      !
+    end do
+call OOOPimscGAElement_atomic_intImageSyncMemoryCount99_CA (Object_CA, intSyncMemoryCount)
+write(*,*) 'segment order restored to value x on image y:',intSyncMemoryCount ,this_image()
+  end if
+  !
+  !************************************************************************
+  ! (3) send the current intSyncMemoryCount on this image to the remote image:
+  ! (counterpart synchronization routine is step 7 in OOOPimsc_SynchronizeTheInvolvedImages_CA)
+  !
+  intImageActivityFlag = OOOPimscEnum_ImageActivityFlag % FinishedSegmentSynchronization
+  ! pack the intImageActivityFlag together with the current segment number (sync memory count):
+  ! (1) get the SyncMemoryCount on this image:
+  call OOOPimscGAElement_atomic_intImageSyncMemoryCount99_CA (Object_CA, intSyncMemoryCount)
+  ! (2) increment it by 1 because of the follow call to OOOPimscSAElement_atomic_intImageActivityFlag99_CA
+  !     (which does execute SYNC MEMORY)
+  intSyncMemoryCount = intSyncMemoryCount + 1
+  ! (3) pack the enum value together with the SyncMemoryCount:
+  call OOOPimsc_PackEnumValue_ImageActivityFlag (Object_CA, intImageActivityFlag, intSyncMemoryCount, intPackedEnumValue)
+  !
+  ! signal to the remote image (image 1) that this image is now in state 'FinishedSegmentSynchronization'
+  call OOOPimscSAElement_atomic_intImageActivityFlag99_CA (Object_CA, intPackedEnumValue, &
+                         intRemoteImageNumber, intArrayIndex = this_image(), logExecuteSyncMemory = .true.)
+  !**********************************************************************
+  !
+                                                                call OOOGglob_subResetProcedures
+end subroutine OOOPimsc_DoSegmentSynchronization_CA
+
+```
