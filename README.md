@@ -248,3 +248,48 @@ end subroutine OOOPimsc_SynchronizeTheInvolvedImages_CA
 ```
 
 # The Parallel Logic Codes to restore segment ordering (executed on images 2, 3, and 4 for this example)
+
+
+```fortran
+subroutine OOOPimsc_Start_SegmentSynchronization_CA (Object_CA, intSetFromImageNumber)
+  ! this routine starts the segment synchronization (restoring) on the involved inages
+  ! (the involved images (not image 1) will execute this)
+  ! (counterpart synchronization routine is IIimma_SYNC_CheckActivityFlag)
+  type (OOOPimsc_adtImageStatus_CA), codimension[*], volatile, intent (inout) :: Object_CA
+  integer(OOOGglob_kint), intent (in) :: intSetFromImageNumber ! this is the remote image number (image 1)
+                                                               ! which initiated the synchronization
+  integer(OOOGglob_kint) :: status = 0 ! error status
+  integer(OOOGglob_kint) :: intImageActivityFlag
+  integer(OOOGglob_kint) :: intPackedEnumValue
+  integer(OOOGglob_kint) :: intRemoteImageNumber
+  !
+                                                                call OOOGglob_subSetProcedures &
+                                                            ("OOOPimsc_Start_SegmentSynchronization_CA")
+  !
+  ! *********************************************************************
+  ! start the segment synchronization (restoring) on the involved images:
+  !
+  intRemoteImageNumber = intSetFromImageNumber
+  !
+  intImageActivityFlag = OOOPimscEnum_ImageActivityFlag % WaitForSegmentSynchronization
+  !
+  ! pack the ImageActivityFlag together with this_image():
+  call OOOPimsc_PackEnumValue_ImageActivityFlag (Object_CA, intImageActivityFlag, this_image(), intPackedEnumValue)
+  !
+  ! signal to the remote image (image 1) that this image is now in state 'WaitForSegmentSychronization':
+  ! (counterpart synchronization routine is OOOPimsc_SynchronizeTheInvolvedImages_CA)
+  call OOOPimscSAElement_atomic_intImageActivityFlag99_CA (Object_CA, intPackedEnumValue, &
+                         intRemoteImageNumber, intArrayIndex = this_image(), logExecuteSyncMemory = .true.)
+  !
+  call OOOPimsc_WaitForSegmentSynchronization_CA (Object_CA, intSetFromImageNumber) ! (the routine is below)
+  !
+  call OOOPimsc_DoSegmentSynchronization_CA (Object_CA, intSetFromImageNumber) ! (the routine is below)
+  !
+  ! finish execution on the executing image (only for this example and to avoid an error stop statement
+  ! to terminate execution):
+  call OOOPimscSAElement_atomic_intImageActivityFlag99_CA (OOOPimscImageStatus_CA_1, OOOPimscEnum_ImageActivityFlag % &
+                                    ExecutionFinished, this_image(), logExecuteSyncMemory = .false.)
+  !
+                                                                call OOOGglob_subResetProcedures
+end subroutine OOOPimsc_Start_SegmentSynchronization_CA
+```
