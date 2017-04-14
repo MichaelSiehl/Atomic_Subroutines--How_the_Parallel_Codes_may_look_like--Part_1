@@ -7,7 +7,7 @@ Nevertheless, the aim is less to show how such segment restoring can be done, bu
 
 Please follow with the second part for a less redundant version of the parallel codes using a customized synchronization procedure: https://github.com/MichaelSiehl/Atomic_Subroutines--How_the_Parallel_Codes_may_look_like--Part_2
 
-The src folder contains the complete code with additionally required files.
+The src folder contains the complete code with additionally required files. The parallel logic codes shown here are all in the source code file OOOPimsc_admImageStatus_CA.f90.
 
 # The Parallel Logic Code to initiate and control restoring of ordered execution segments (executed on image 1)
 The following procedure 'OOOPimsc_SynchronizeTheInvolvedImages_CA' comprises all the required parallel logic codes that get executed on image 1 for initiating and controlling the segment synchronization (i.e. the restoring of ordered execution segments) among (and on) the remote images (2, 3, and 4 for this example).<br />
