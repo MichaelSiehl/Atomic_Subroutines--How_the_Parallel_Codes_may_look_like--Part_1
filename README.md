@@ -20,14 +20,14 @@ subroutine OOOPimsc_SynchronizeTheInvolvedImages_CA (Object_CA, intNumberOfImage
   type (OOOPimsc_adtImageStatus_CA), codimension[*], volatile, intent (inout) :: Object_CA
   integer(OOOGglob_kint), intent (in) :: intNumberOfImages ! these are the number of involved remote images
   integer(OOOGglob_kint), dimension (intNumberOfImages), intent (in) :: intA_RemoteImageNumbers
-  integer(OOOGglob_kint) :: status = 0 ! error status
+  integer(OOOGglob_kint) :: status ! error status
   integer(OOOGglob_kint) :: intCount
   integer(OOOGglob_kint) :: intImageNumber
   integer(OOOGglob_kint) :: intImageActivityFlag
-  integer(OOOGglob_kint) :: intSetFromImageNumber = 0
+  integer(OOOGglob_kint) :: intSetFromImageNumber
   logical(OOOGglob_klog), dimension (intNumberOfImages) :: logA_CheckImageStates
   integer(OOOGglob_kint) :: intPackedEnumValue
-  integer(OOOGglob_kint) :: intCurrentSegmentCount = 0
+  integer(OOOGglob_kint) :: intCurrentSegmentCount
   integer(OOOGglob_kint), dimension (1:intNumberOfImages, 1:2) :: intA_RemoteImageAndSegmentCounts
   integer(OOOGglob_kint) :: intMaxSegmentCount
   integer(OOOGglob_kint), dimension (1) :: intA_MaxSegmentCountLocation ! the array index
