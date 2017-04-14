@@ -248,9 +248,9 @@ end subroutine OOOPimsc_SynchronizeTheInvolvedImages_CA
 ```
 
 # The Parallel Logic Codes to restore segment ordering (executed on images 2, 3, and 4 for this example)
-The following parallel logic codes are responsible to restore segment ordering and get executed on those coarray images (i.e. the group of images) that shall experience the restoring.
+The following parallel logic codes are responsible to restore segment ordering and get executed on those coarray images (i.e. the group of images) that shall experience the restoring.<br />
 
-The first procedure will signal to the remote image (image 1) that this image is now in state 'WaitForSegmentSychronization'. That is the code executed between the logical code sections (1) and (2) of the OOOPimsc_SynchronizeTheInvolvedImages_CA procedure (see above):
+The first procedure will signal to the remote image (image 1) that this image is now in state 'WaitForSegmentSychronization'. That is the code executed between the logical code sections (1) and (2) of the OOOPimsc_SynchronizeTheInvolvedImages_CA procedure (see above):<br />
 
 ```fortran
 subroutine OOOPimsc_Start_SegmentSynchronization_CA (Object_CA, intSetFromImageNumber)
@@ -295,6 +295,9 @@ subroutine OOOPimsc_Start_SegmentSynchronization_CA (Object_CA, intSetFromImageN
                                                                 call OOOGglob_subResetProcedures
 end subroutine OOOPimsc_Start_SegmentSynchronization_CA
 ```
+The next procedure, OOOPimsc_WaitForSegmentSynchronization_CA, waits with further code execution until the ImageActivityFlag for this image is remotely set to state 'ContinueSegmentSynchronization'. This requires a spin-wait loop synchronization on each of the involved images. The spin-wait loop below is counterpart to logical code section (3) of the OOOPimsc_SynchronizeTheInvolvedImages_CA procedure (see above).<br />
+
+Then, the procedure will transmit the SyncMemoryCount value (segment count) to the remote image 1. Image status turns into 'SendetCurrentSegmentNumber'. That code section is counterpart to logical code section (4) of the OOOPimsc_SynchronizeTheInvolvedImages_CA procedure.<br />
 
 ```fortran
 subroutine OOOPimsc_WaitForSegmentSynchronization_CA (Object_CA, intSetFromImageNumber)
