@@ -19,6 +19,7 @@ The following procedure 'OOOPimsc_SynchronizeTheInvolvedImages_CA' comprises all
 (6) initiate that the remote images do restore segment ordering<br />
 (7) wait until all the involved remote image(s) do signal that they are in state FinishedSegmentSynchronization<br />
 
+Access to atomic subroutines is encapsulated by calls to procedures 'OOOPimscSAElement_atomic_intImageActivityFlag99_CA' (atomic_define) and 'OOOPimscGAElement_check_atomic_intImageActivityFlag99_CA' (atomic_ref).
 
 ```fortran
 subroutine OOOPimsc_SynchronizeTheInvolvedImages_CA (Object_CA, intNumberOfImages,intA_RemoteImageNumbers)
