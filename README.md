@@ -21,7 +21,7 @@ The procedure is divided into seven logical parts (1)-(7):<br />
 (6) initiate that the remote images do restore segment ordering<br />
 (7) wait until all the involved remote image(s) do signal that they are in state FinishedSegmentSynchronization<br />
 
-Parts (2), (4), and (7) do contain a spin-wait loop synchronization each. For this example, these are the redundant code sections because we did not implement a customized snchronization procedure yet.<br />
+Parts (2), (4), and (7) do contain a spin-wait loop synchronization each. For this example, these are the redundant code sections because we did not implement a customized snchronization procedure yet. (By comparing these code sections with those of the second version -in the other GitHub repository-, it may become more obvious how powerful customized synchronization procedures can be). <br />
 
 Access to atomic subroutines is encapsulated by calls of the procedures 'OOOPimscSAElement_atomic_intImageActivityFlag99_CA' (atomic_define) and 'OOOPimscGAElement_check_atomic_intImageActivityFlag99_CA' (atomic_ref).<br />
 
