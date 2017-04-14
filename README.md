@@ -10,14 +10,14 @@ Please follow with the second part for a less redundant version of the parallel 
 The src folder contains the complete code with additionally required files.
 
 # The Parallel Logic Code to initiate and control restoring of ordered execution segments (executed on image 1)
-The following procedure 'OOOPimsc_SynchronizeTheInvolvedImages_CA' comprises all the required parallel logic codes that get executed on image 1 for controlling the segment synchronization (i.e. the restoring of ordered executing segments) among (and on) the remote images (2, 3, and 4 for this example). The procedure is divided into seven logical parts (1)-(7):
-(1) initiate segment synchronization on the involved remote images
-(2) wait until all the involved remote image(s) do signal that they are in state WaitForSegmentSynchronization
-(3) set the involved remote images to state ContinueSegmentSynchronization
-(4) wait until all the involved remote image(s) do signal that they are in state SendetCurrentSegmentNumber
-(5) get the max segment (sync memory) count (only the remote images)
-(6) initiate that the remote images do restore segment ordering
-(7) wait until all the involved remote image(s) do signal that they are in state FinishedSegmentSynchronization
+The following procedure 'OOOPimsc_SynchronizeTheInvolvedImages_CA' comprises all the required parallel logic codes that get executed on image 1 for controlling the segment synchronization (i.e. the restoring of ordered executing segments) among (and on) the remote images (2, 3, and 4 for this example). The procedure is divided into seven logical parts (1)-(7):<br />
+(1) initiate segment synchronization on the involved remote images<br />
+(2) wait until all the involved remote image(s) do signal that they are in state WaitForSegmentSynchronization<br />
+(3) set the involved remote images to state ContinueSegmentSynchronization<br />
+(4) wait until all the involved remote image(s) do signal that they are in state SendetCurrentSegmentNumber<br />
+(5) get the max segment (sync memory) count (only the remote images)<br />
+(6) initiate that the remote images do restore segment ordering<br />
+(7) wait until all the involved remote image(s) do signal that they are in state FinishedSegmentSynchronization<br />
 
 
 ```fortran
