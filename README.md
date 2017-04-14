@@ -244,3 +244,5 @@ write(*,*) 'remote image number and its CurrentSegmentCount:',intA_RemoteImageAn
                                                                 call OOOGglob_subResetProcedures
 end subroutine OOOPimsc_SynchronizeTheInvolvedImages_CA
 ```
+
+# The Parallel Logic Codes to restore segment ordering (executed on images 2, 3, and 4 for this example)
