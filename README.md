@@ -362,7 +362,11 @@ subroutine OOOPimsc_WaitForSegmentSynchronization_CA (Object_CA, intSetFromImage
 end subroutine OOOPimsc_WaitForSegmentSynchronization_CA
 
 ```
+The next procedure, OOOPimsc_DoSegmentSynchronization_CA, waits with further code execution until the ImageActivityFlag for this image is remotely set to state 'DoSegmentSynchronization'. This requires another spin-wait loop synchronization on each of the involved images. The spin-wait loop below is counterpart to logical code section (6) of the OOOPimsc_SynchronizeTheInvolvedImages_CA procedure (see above).<br />
 
+Then, the code does restore the segment ordering for the executing image.<br />
+
+Finally, the procedure will send the current SyncMemoryCount on this image to the remote image 1. Image status turns into 'FinishedSegmentSynchronization'. That code section is counterpart to logical code section (7) of the OOOPimsc_SynchronizeTheInvolvedImages_CA procedure.<br />
 
 ```fortran
 subroutine OOOPimsc_DoSegmentSynchronization_CA (Object_CA, intSetFromImageNumber)
