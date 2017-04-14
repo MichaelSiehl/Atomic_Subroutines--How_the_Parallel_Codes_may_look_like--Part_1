@@ -10,7 +10,7 @@ Please follow with the second part for a less redundant version of the parallel 
 The src folder contains the complete code with additionally required files.
 
 # The Parallel Logic Code to initiate and control restoring of ordered execution segments (executed on image 1)
-The following procedure 'OOOPimsc_SynchronizeTheInvolvedImages_CA' comprises all the required parallel logic codes that get executed on image 1 for controlling the segment synchronization (i.e. the restoring of ordered executing segments) among (and on) the remote images (2, 3, and 4 for this example).<br />
+The following procedure 'OOOPimsc_SynchronizeTheInvolvedImages_CA' comprises all the required parallel logic codes that get executed on image 1 for initiating and controlling the segment synchronization (i.e. the restoring of ordered execution segments) among (and on) the remote images (2, 3, and 4 for this example).<br />
 
 The procedure is divided into seven logical parts (1)-(7):<br />
 (1) initiate segment synchronization on the involved remote images<br />
