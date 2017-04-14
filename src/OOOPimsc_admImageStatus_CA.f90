@@ -1,4 +1,4 @@
-! https://github.com/MichaelSiehl/Atomic_Subroutines--Using_them_to_implement_a_bi-directional_synchronization
+! https://github.com/MichaelSiehl/Atomic_Subroutines--How_the_Parallel_Codes_may_look_like--Part_1
 
 module OOOPimsc_admImageStatus_CA
 !************************************************
