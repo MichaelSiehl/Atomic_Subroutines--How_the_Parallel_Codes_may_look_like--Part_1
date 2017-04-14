@@ -248,7 +248,9 @@ end subroutine OOOPimsc_SynchronizeTheInvolvedImages_CA
 ```
 
 # The Parallel Logic Codes to restore segment ordering (executed on images 2, 3, and 4 for this example)
+The following parallel logic codes are responsible to restore segment ordering and get executed on those coarray images (i.e. the group of images) that shall experience the restoring.
 
+The first procedure will signal to the remote image (image 1) that this image is now in state 'WaitForSegmentSychronization'. That is the code executed between the logical code sections (1) and (2) of the OOOPimsc_SynchronizeTheInvolvedImages_CA procedure (see above):
 
 ```fortran
 subroutine OOOPimsc_Start_SegmentSynchronization_CA (Object_CA, intSetFromImageNumber)
