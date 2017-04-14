@@ -17,13 +17,15 @@ The procedure is divided into seven logical code sections (1)-(7):<br />
 (2) wait until all the involved remote image(s) do signal that they are in state WaitForSegmentSynchronization<br />
 (3) set the involved remote images to state ContinueSegmentSynchronization<br />
 (4) wait until all the involved remote image(s) do signal that they are in state SendetCurrentSegmentNumber<br />
-(5) get the max segment (sync memory) count (only the remote images)<br />
+(5) get the max segment (sync memory) count<br />
 (6) initiate that the remote images do restore segment ordering<br />
 (7) wait until all the involved remote image(s) do signal that they are in state FinishedSegmentSynchronization<br />
 
 Code sections (2), (4), and (7) do contain a spin-wait loop synchronization each. For this example, these are the redundant code sections because we did not implement a customized snchronization procedure yet. (By comparing these code sections with those of the second version -in the other GitHub repository-, it may become more obvious how powerful customized synchronization procedures can be). <br />
 
 Code sections (1), (3), and (6) do comprise calls to atomic_define each and do have counterpart spin-wait loop synchronizations, executed on the remote images.<br />
+
+(Code section (5) is purely local and does not involve any interaction or data transfer with a remote image).<br />
 
 (Access to atomic subroutines is encapsulated by calls of the procedures 'OOOPimscSAElement_atomic_intImageActivityFlag99_CA' (atomic_define) and 'OOOPimscGAElement_check_atomic_intImageActivityFlag99_CA' (atomic_ref)).<br />
 
