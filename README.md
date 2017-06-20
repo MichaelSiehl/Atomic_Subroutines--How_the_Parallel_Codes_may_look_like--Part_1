@@ -1,6 +1,24 @@
 # Atomic_Subroutines--How_the_Parallel_Codes_may_look_like--Part_1
 Fortran 2008 coarray programming with unordered execution segments (user-defined ordering) - Atomic Subroutines: How the parallel logic codes may look like - Part 1
 
+# Note
+The content of this Github repository is still experimental.<br />
+
+To my current understanding, the core solutions herein are very similar to the solution of the ABA problem with the Compare-And-Swap (CAS) hardware implementation for atomic operations on x86 computers. See the following links for a description of the ABA problem:<br />
+https://jfdube.wordpress.com/2011/11/30/understanding-atomic-operations/<br />
+https://en.wikipedia.org/wiki/Compare-and-swap<br />
+https://en.wikipedia.org/wiki/ABA_problem<br />
+
+Nevertheless, our solution for solving the ABA-style problems herein may differ somewhat from the hardware-related solutions: Instead, we use two simple programming techniques:<br />
+(1)<br />
+Compared to the ABA solution, we just use an ordinary integer scalar to store an integer-based enumeration value (this is similar to the appended increment counter of the ABA solution) together with the main atomic value (which I call 'additional atomic value' in the repository's source code): https://github.com/MichaelSiehl/Atomic_Subroutines--Using_Integers_Efficiently.<br />
+Nevertheless, we do not use that programming technique directly to solve an ABA-style problem here, but merely to implement the sophisticated synchronization methods herein. (Also, the integer-based enumeration helps to make the parallel logic codes more readable, compared to a simple increment counter).<br />
+(2)<br />
+To prevent ABA-style problems herein, we use a simple array technique: https://github.com/MichaelSiehl/Atomic_Subroutines--Using_Coarray_Arrays_to_Allow_for_Safe_Remote_Communication:<br />
+OpenCoarrays does allow to use remote atomic_define together with a single (scalar) array element of an integer array component (of a derived type coarray). (The 'remote' here is not supported by ifort 18 beta update 1 yet).<br />
+Together with the above ABA-like solution, we can safely synchronize the value of each distinct (scalar) array element atomically.<br />
+This might also be the promising solution for synchronizing whole integer arrays atomically later on. And if we can process whole integer arrays atomically (and since integer is a very general data type that can in principle be used to store other data types with it), there might be no restrictions for implementing even more sophisticated algorithms based entirely on atomics (and thus, with user-defined segment ordering).
+
 # Overview
 This GitHub repository contains a simple but working example program to restore segment ordering among a number of coarray images, using Fortran 2008 source code. The example program does run on 4 coarray images with unordered execution segments among all of them before segment order restoring starts. The example restores the segment ordering among images 2, 3, and 4. To do so, image 1 does execute parallel logic code that does initiate and control the restoring process among the other coarray images. There are several (atomic) synchronizations required, between image 1 and each of the other images resp.<br />
 Nevertheless, the aim is less to show how such segment restoring can be done, but rather how such parallel logic codes, based on atomic subroutines, may look like in principle. As such, this GitHub repository contains only a first version, showing best how the parallel logic codes are working. Thus, the excerpts of the parallel logic codes shown here are more redundant than desired.
